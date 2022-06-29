@@ -1,4 +1,3 @@
-
 #[macro_export]
 macro_rules! impl_passive_checks{
     ( $( ($check:ident,$check_func:ident,$name:literal,$desc:literal )),* ) => {
@@ -82,6 +81,7 @@ macro_rules! impl_active_checks{
                     )*
                 }
             }
+
         }
         impl <T:OAS+Serialize>ActiveScan<T>{
             pub async fn run_check(&self,check:ActiveChecks,auth:&Authorization)->ActiveChecks{

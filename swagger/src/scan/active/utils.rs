@@ -21,3 +21,11 @@ pub fn get_path_urls(path: &PathItem, servers: Option<Vec<Server>>) -> Vec<(Meth
     }
     urls
 }
+pub fn create_string(num: i64) -> String {
+    let mut str = String::from("");
+    for n in 0..num + 1 {
+        println!("{:?}", n);
+        str.push_str("a");
+    }
+    str
+}

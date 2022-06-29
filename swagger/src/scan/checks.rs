@@ -1,6 +1,6 @@
 use super::*;
-use crate::scan::passive::*;
 use crate::scan::active::*;
+use crate::scan::passive::*;
 use strum_macros::EnumIter;
 
 ///Add the rule name to this enum
@@ -10,7 +10,7 @@ impl Default for PassiveChecks {
         Self::CheckServerUrl(vec![])
     }
 }
-pub trait Check{
+pub trait Check {
     fn alerts_text(&self) -> ColoredString;
     fn top_severity(&self) -> Level;
     fn result(&self) -> &'static str;
@@ -94,5 +94,18 @@ impl_passive_checks![
 ];
 
 impl_active_checks![
-    (CheckMinMax, check_min_max,not_2xx,"NUMBER LIMITS ENFORCED","checks that the api enforces the number limits in the OAS")
+    (
+        CheckMinMax,
+        check_min_max,
+        not_2xx,
+        "NUMBER LIMITS ENFORCED",
+        "checks that the api enforces the number limits in the OAS"
+    ),
+    (
+        CheckStringMaxLength,
+        check_string_length_max,
+        not_2xx,
+        "STRING LEN",
+        "check that the api validate the String length"
+    )
 ];

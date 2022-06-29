@@ -2,22 +2,20 @@ use super::*;
 use strum::IntoEnumIterator;
 
 mod additional_checks;
-mod response_checks;
-mod utils;
 mod flow;
 mod http_client;
 mod logs;
+mod response_checks;
+mod utils;
 
-
-use http_client::*;
 pub use http_client::Authorization;
-use utils::*;
+use http_client::*;
 pub use logs::*;
 use serde_json::json;
 use std::iter;
+use utils::*;
 
-
-type CheckRet = (Vec<(ResponseData, AttackResponse)>,AttackLog);
+type CheckRet = (Vec<(ResponseData, AttackResponse)>, AttackLog);
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ActiveScanType {
@@ -31,15 +29,15 @@ type OASMap = HashMap<Vec<String>, Schema>;
 type StaticThingy = HashMap<String, (Value, OASMap)>;
 
 #[derive(Default)]
-pub struct ResponseData{
+pub struct ResponseData {
     location: String,
     alert_text: String,
 }
 
 #[derive(Debug, Clone, Serialize, Default, PartialEq, Eq)]
 pub struct ActiveScan<T>
-    where
-        T: Serialize,
+where
+    T: Serialize,
 {
     oas: T,
     oas_value: Value,
@@ -60,7 +58,7 @@ impl<T: OAS + Serialize + for<'de> Deserialize<'de>> ActiveScan<T> {
                 return Err("Failed at deserializing swagger value to a swagger struct, please check the swagger definition");
             }
         };
-        let static_props = Self::static_thingy_creator(&oas,&oas_value);
+        let static_props = Self::static_thingy_creator(&oas, &oas_value);
         Ok(ActiveScan {
             oas,
             oas_value,
@@ -98,7 +96,7 @@ impl<T: OAS + Serialize + for<'de> Deserialize<'de>> ActiveScan<T> {
         match verbosity {
             0 => {
                 //print_checks_table(&self.checks);
-                println!("{:?}",self.checks);
+                println!("{:?}", self.checks);
                 // print_attack_alerts_table(&self.checks);
             }
             1 => {
@@ -112,17 +110,19 @@ impl<T: OAS + Serialize + for<'de> Deserialize<'de>> ActiveScan<T> {
         String::new()
     }
 
-    pub fn static_thingy_creator(oas: &T, oas_value : &Value) -> StaticThingy {
+    pub fn static_thingy_creator(oas: &T, oas_value: &Value) -> StaticThingy {
         let mut ret_val = StaticThingy::new();
         for (path, item) in oas.get_paths() {
-            let (map, payload)
-                = Self::build_payload( oas_value, &item);
+            let (map, payload) = Self::build_payload(oas_value, &item);
             ret_val.insert(path.clone(), (payload, map));
         }
         ret_val
     }
 
-    pub fn build_payload(oas_value: &Value,path_item: &PathItem) -> (HashMap<Vec<String>, Schema>, Value) {
+    pub fn build_payload(
+        oas_value: &Value,
+        path_item: &PathItem,
+    ) -> (HashMap<Vec<String>, Schema>, Value) {
         let mut payload = json!({});
         let mut map: HashMap<Vec<String>, Schema> = HashMap::new();
         for (_, op) in path_item.get_ops() {
@@ -139,9 +139,12 @@ impl<T: OAS + Serialize + for<'de> Deserialize<'de>> ActiveScan<T> {
         (map, payload)
     }
 
-    pub fn unwind_scheme( oas_value: &Value, reference: &SchemaRef,
-                         map: &mut HashMap<Vec<String>, Schema>,
-                         path: &mut Vec<String>) -> Value {
+    pub fn unwind_scheme(
+        oas_value: &Value,
+        reference: &SchemaRef,
+        map: &mut HashMap<Vec<String>, Schema>,
+        path: &mut Vec<String>,
+    ) -> Value {
         let mut payload = json!({});
         let reference = reference.inner(oas_value);
         if let Some(example) = reference.example {
@@ -151,14 +154,9 @@ impl<T: OAS + Serialize + for<'de> Deserialize<'de>> ActiveScan<T> {
             for (name, schema) in prop_map {
                 path.push(name.clone());
                 payload[&name] = match schema {
-                    SchemaRef::Ref(_) => {
-                        Self::unwind_scheme(oas_value, &schema, map, path)
-                    }
+                    SchemaRef::Ref(_) => Self::unwind_scheme(oas_value, &schema, map, path),
                     SchemaRef::Schema(schema) => {
-                        map.insert(
-                            path.clone(),
-                            *schema.clone(),
-                        );
+                        map.insert(path.clone(), *schema.clone());
                         path.pop();
                         if let Some(example) = schema.example {
                             example
@@ -174,34 +172,35 @@ impl<T: OAS + Serialize + for<'de> Deserialize<'de>> ActiveScan<T> {
         payload
     }
     pub fn gen_default_value(schema: Box<Schema>) -> Value {
-        let ret: Value =
-            if let Some(data_type) = schema.schema_type {
-                match data_type.as_str() {
-                    "string" => {
-                        if let Some(num) = schema.min_length {
-                            json!(iter::repeat(['B','L','S','T']).
-                            flatten().
-                            take(num.try_into().unwrap()).
-                            collect::<String>())
-                        } else { json!("BLST") }
-                    }
-                    "integer" => {
-                        if let Some(num) = schema.minimum {
-                            json!(num)
-                        } else {
-                            json!(5usize)
-                        }
-                    }
-                    "boolean" => {
-                        json!(false)
-                    }
-                    _ => {
-                        json!({})
+        let ret: Value = if let Some(data_type) = schema.schema_type {
+            match data_type.as_str() {
+                "string" => {
+                    if let Some(num) = schema.min_length {
+                        json!(iter::repeat(['B', 'L', 'S', 'T'])
+                            .flatten()
+                            .take(num.try_into().unwrap())
+                            .collect::<String>())
+                    } else {
+                        json!("BLST")
                     }
                 }
-            } else {
-                json!({})
-            };
+                "integer" => {
+                    if let Some(num) = schema.minimum {
+                        json!(num)
+                    } else {
+                        json!(5usize)
+                    }
+                }
+                "boolean" => {
+                    json!(false)
+                }
+                _ => {
+                    json!({})
+                }
+            }
+        } else {
+            json!({})
+        };
         ret
     }
 
