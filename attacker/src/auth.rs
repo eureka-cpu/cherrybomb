@@ -44,7 +44,7 @@ impl Authorization {
         }
     }
     pub fn is_api_key(&self) -> bool {
-        matches!(self,Self::APIKey(_))
+        matches!(self, Self::APIKey(_))
     }
 }
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Hash)]

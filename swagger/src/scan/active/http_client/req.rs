@@ -113,7 +113,7 @@ impl AttackRequest {
             .collect()
     }
 
-    pub async fn send_request(&self, print: bool) -> Result<AttackResponse, reqwest::Error> {
+    pub async fn send_request(&self,print:bool) -> Result<AttackResponse,reqwest::Error> {
         let client = reqwest::Client::new();
         let method1 = reqwest::Method::from_bytes(self.method.to_string().as_bytes()).unwrap();
         let (req_payload, req_query, path, headers1) = self.params_to_payload();
@@ -124,10 +124,10 @@ impl AttackRequest {
             .headers((&h).try_into().expect("not valid headers"))
             .build()
             .unwrap();
-        match client.execute(req).await {
-            Ok(res) => {
-                if print {
-                    println!("{}: {}", "Request".bright_blue().bold(), self);
+        match client.execute(req).await { 
+            Ok(res)=> {
+                if print{
+                    println!("{}: {}","Request".bright_blue().bold(),self);
                 }
                 Ok(AttackResponse {
                     status: res.status().into(),
@@ -138,9 +138,9 @@ impl AttackRequest {
                         .collect(),
                     payload: res.text().await.unwrap_or_default(),
                 })
-            }
-            Err(e) => {
-                println!("{}: {}", "FAILED TO EXECUTE".red().bold().blink(), self);
+            },
+            Err(e)=>{
+                println!("{}: {}","FAILED TO EXECUTE".red().bold().blink(),self); 
                 Err(e)
             }
         }

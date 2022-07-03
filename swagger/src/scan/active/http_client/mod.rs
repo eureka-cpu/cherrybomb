@@ -17,6 +17,7 @@ pub struct AttackResponse {
     pub status: u16,
     pub payload: String,
     pub headers: HashMap<String, String>,
+     
 }
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, Eq)]
 pub struct AttackRequest {

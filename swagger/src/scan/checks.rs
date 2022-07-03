@@ -107,5 +107,19 @@ impl_active_checks![
         not_2xx,
         "STRING LEN",
         "check that the api validate the String length"
+    ),
+    (
+        CheckSSL,
+        check_ssl,
+        not_2xx,
+        "encrypted communication",
+        "Check if the connection is secure"
+    ),
+    (
+        ParameterPollution,
+        check_parameter_pollution,
+        reflected_and_2xx,
+        "parameter pollution",
+        "Check if the endpoint is vulnerable to http pollution"
     )
 ];
