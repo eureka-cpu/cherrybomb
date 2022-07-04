@@ -36,21 +36,18 @@ pub fn create_http_url(url: String) -> String {
         let str = format!("{}{}", "http://", vec[1]);
         println!("THe url after format: {:?}", str);
         str
-
-    }
-    else {
+    } else {
         url
     }
 }
-pub fn create_url_with_parameter(url: &[(String, &str)], path: String) -> String {
-    let mut new_url = format!("{}",path);
+pub fn create_url_with_parameter(url: &[(String, &str)], path: String) -> (String, String) {
+    let mut new_url = format!("{}", path);
     let parameter_polluted = "various";
-    for i in  url{
-        new_url.push_str(&*format!("?{}={}" ,i.0, i.1));
-        new_url.push_str(&*format!("?{}={}",i.0, parameter_polluted));
+    for i in url {
+        new_url.push_str(&*format!("?{}={}", i.0, i.1));
+        new_url.push_str(&*format!("?{}={}", i.0, parameter_polluted));
     }
     println!("New url endpoint with parameter: {} ", new_url);
 
-    new_url
-    }
-
+    (new_url, parameter_polluted.to_string())
+}

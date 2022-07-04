@@ -39,7 +39,6 @@ pub struct ActiveScan<T>
 where
     T: Serialize,
 {
-    
     oas: T,
     oas_value: Value,
     verbosity: u8,

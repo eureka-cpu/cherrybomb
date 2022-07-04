@@ -77,6 +77,7 @@ macro_rules! impl_active_checks{
             pub fn inner(&self)->Vec<Alert>{
                 match &self{
                     $(
+                        
                         ActiveChecks::$check(i)=>i.0.to_vec(),
                     )*
                 }
