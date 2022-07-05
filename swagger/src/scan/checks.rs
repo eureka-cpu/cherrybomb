@@ -121,5 +121,12 @@ impl_active_checks![
         reflected_and_2xx,
         "parameter pollution",
         "Check if the endpoint is vulnerable to http pollution"
+    ),
+    (
+        OpenRedirect,
+        check_open_redirect,
+        check_if_3xx,
+        "open redirect",
+        "Check if the API may be vulnerable to openredirect"
     )
 ];
