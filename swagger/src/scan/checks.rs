@@ -94,34 +94,34 @@ impl_passive_checks![
 ];
 
 impl_active_checks![
-    (
-        CheckMinMax,
-        check_min_max,
-        not_2xx,
-        "NUMBER LIMITS ENFORCED",
-        "checks that the api enforces the number limits in the OAS"
-    ),
-    (
-        CheckStringMaxLength,
-        check_string_length_max,
-        not_2xx,
-        "STRING LEN",
-        "check that the api validate the String length"
-    ),
-    (
-        CheckSSL,
-        check_ssl,
-        not_2xx,
-        "encrypted communication",
-        "Check if the connection is secure"
-    ),
-    (
-        ParameterPollution,
-        check_parameter_pollution,
-        reflected_and_2xx,
-        "parameter pollution",
-        "Check if the endpoint is vulnerable to http pollution"
-    ),
+    // (
+    //     CheckMinMax,
+    //     check_min_max,
+    //     not_2xx,
+    //     "NUMBER LIMITS ENFORCED",
+    //     "checks that the api enforces the number limits in the OAS"
+    // ),
+    // (
+    //     CheckStringMaxLength,
+    //     check_string_length_max,
+    //     not_2xx,
+    //     "STRING LEN",
+    //     "check that the api validate the String length"
+    // ),
+    // (
+    //     CheckSSL,
+    //     check_ssl,
+    //     not_2xx,
+    //     "encrypted communication",
+    //     "Check if the connection is secure"
+    // ),
+    // (
+    //     ParameterPollution,
+    //     check_parameter_pollution,
+    //     reflected_and_2xx,
+    //     "parameter pollution",
+    //     "Check if the endpoint is vulnerable to http pollution"
+    // ),
     (
         OpenRedirect,
         check_open_redirect,
