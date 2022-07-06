@@ -17,9 +17,17 @@ pub fn change_payload(orig: &Value, path: &[String], new_val: Value) -> Value {
     *change = new_val;
     ret.clone()
 }
+pub fn change_payload(orig: &Value, path: &[String], new_val: Value) -> Value {
+    let mut change = &mut json!(null);
+    let mut ret = orig.clone();
+    for path_part in path.iter() {
+        change = &mut ret[path_part];
+    }
+    *change = new_val;
+    ret.clone()
+}
+
 impl<T: OAS + Serialize> ActiveScan<T> {
-   
-    
     pub async fn check_parameter_pollution(&self, auth: &Authorization) -> (CheckRet, Vec<String>) {
         let mut ret_val: Vec<(ResponseData, AttackResponse)> = vec![];
         let mut attack_log: AttackLog = AttackLog::default();
@@ -37,7 +45,7 @@ impl<T: OAS + Serialize> ActiveScan<T> {
                             let in_var = parameter.param_in.to_string();
                             let param_name = i.inner(&Value::Null).name.to_string();
                             let new_param = param_name.clone();
-                            match in_var.as_str() {
+                            let param_example = match in_var.as_str() {
                                 "query" => {
                                     let req = AttackRequest::builder()
                                         .uri(&base_url.url, &path)
@@ -83,8 +91,51 @@ impl<T: OAS + Serialize> ActiveScan<T> {
                                 }
                                 "path" => {}
                                 _ => (),
-                            }
+                                //    if m == Method::POST {
+                                // for i in op.params().iter_mut() {
+                                //     println!("This is a post request");
+                                //     let parameter = i.inner(&Value::Null);
+                                //     let in_var = parameter.param_in.to_string();
+                                //     let param_name = i.inner(&Value::Null).name.to_string();
+                                //     let new_param = param_name.clone();
+
+                                // }
+                            };
                         }
+                    }
+                }
+            }
+        }
+        ((ret_val, attack_log), vec_polluted)
+    }
+    pub async fn check_post_parameter_pollution(
+        &self,
+        auth: &Authorization,
+    ) -> (CheckRet, Vec<String>) {
+        let mut ret_val: Vec<(ResponseData, AttackResponse)> = vec![];
+        let mut attack_log: AttackLog = AttackLog::default();
+        let mut vec_polluted = vec!["blstparamtopollute".to_string()];
+        for (path, ( payload, map)) in &self.static_props {
+         //   dbg!(&payload);
+            for (json_path, schema) in map {
+                let mut test_vals: Vec<_> = vec![];
+             //   dbg!(&json_path);
+                if let Some(ex) = &schema.example {
+                    test_vals.push(ex);
+                    println!("{}", ex);
+                }
+                for val in test_vals.iter() {
+                    if let Some(url) =
+                        get_path_urls(self.oas.get_paths().get(path).unwrap(), self.oas.servers())
+                            .iter() //to change maybe to the beginning; 
+                            .find(|&&(method, _)| method == POST)
+                    {
+                        println!("PAYLOAD: ===>{:?}", payload);
+                        for i in payload.as_object().unwrap(){
+                            println!("{:?}",i);
+                        }
+                        
+                        
                     }
                 }
             }

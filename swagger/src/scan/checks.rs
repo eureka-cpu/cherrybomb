@@ -121,5 +121,12 @@ impl_active_checks![
         reflected_and_2xx,
         "parameter pollution",
         "Check if the endpoint is vulnerable to http pollution"
+    ),
+    (
+        PostParameterPollution,
+        check_post_parameter_pollution,
+        reflected_and_2xx,
+        "Post parameter pollution",
+        "Check if the endpoint is vulnerable to http pollution"
     )
 ];
