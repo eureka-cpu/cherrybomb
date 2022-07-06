@@ -22,12 +22,10 @@ impl<T: OAS + Serialize> ActiveScan<T> {
         let check_ret = check_ret_only.0;
         for (res_data, response) in &check_ret{
             
-            //for (res_data, response) in i.into_iter() {
-                for polluted in &check_ret_param.1{
+                 for polluted in &check_ret_param.1{
                     if (200..300u16).contains(&response.status) {
                         if response.payload.contains(&*polluted) {
-                            // let res_str :String = res_data.alert_text.to_string();
-                            // let res_str_1 :String = res_data.location.to_string();
+                            
                             ret_val.push(Alert::with_certainty(
                                 Level::Medium,
                                 res_data.alert_text.to_string(),
