@@ -115,18 +115,25 @@ impl_active_checks![
     //     "encrypted communication",
     //     "Check if the connection is secure"
     // ),
+    // (
+    //     ParameterPollution,
+    //     check_parameter_pollution,
+    //     reflected_and_2xx,
+    //     "parameter pollution",
+    //     "Check if the endpoint is vulnerable to http pollution"
+    // ),
+    // (
+    //     PostParameterPollution,
+    //     check_post_parameter_pollution,
+    //     reflected_and_2xx,
+    //     "Post parameter pollution",
+    //     "Check if the endpoint is vulnerable to http pollution"
+    // )
     (
-        ParameterPollution,
-        check_parameter_pollution,
-        reflected_and_2xx,
-        "parameter pollution",
-        "Check if the endpoint is vulnerable to http pollution"
-    ),
-    (
-        PostParameterPollution,
-        check_post_parameter_pollution,
-        reflected_and_2xx,
-        "Post parameter pollution",
-        "Check if the endpoint is vulnerable to http pollution"
+        MethodPermissions,
+        check_method_permissions,
+        not_2xx,
+        "Method  permission  ",
+        "Check if the endpoint is correctly configured"
     )
 ];
